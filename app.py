@@ -8,7 +8,8 @@ from tensorflow.keras.applications.resnet50 import preprocess_input
 # Cache para no cargar el modelo en cada interaccion
 @st.cache_resource
 def load_model():
-    model = tf.keras.models.load_model('pokemon_modelo.keras')
+    model = tf.keras.models.load_model('pokemon_modelo.keras', compile=False)
+    #model = tf.keras.models.load_model('pokemon_modelo.keras')
     with open('clases.json') as f:
         class_indices = json.load(f)
     idx_to_class = {v: k for k, v in class_indices.items()}
