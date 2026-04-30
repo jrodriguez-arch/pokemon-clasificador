@@ -8,14 +8,26 @@ from tensorflow.keras.applications.resnet50 import preprocess_input
 # Cache para no cargar el modelo en cada interaccion
 @st.cache_resource
 def load_model():
+    from tensorflow.keras.layers import Dense
+
+    original_from_config = Dense.from_config
+
+    @classmethod
+    def fixed_from_config(cls, config):
+        config.pop("quantization_config", None)
+        return original_from_config(config)
+
+    Dense.from_config = fixed_from_config
+
     model = tf.keras.models.load_model(
-    'pokemon_modelo.keras',
-    compile=False,
-    safe_mode=False
-)
-    #model = tf.keras.models.load_model('pokemon_modelo.keras')
+        'pokemon_modelo.keras',
+        compile=False,
+        safe_mode=False
+    )
+
     with open('clases.json') as f:
         class_indices = json.load(f)
+
     idx_to_class = {v: k for k, v in class_indices.items()}
     return model, idx_to_class
 
